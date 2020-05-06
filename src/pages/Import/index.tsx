@@ -23,19 +23,40 @@ const Import: React.FC = () => {
   const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
+    /**
+     * FormData é uma forma de enviar dados do tipo "multipart/form-data"
+     * Arquivos não podem ser enviados com o tipo JSON
+     */
+    const data = new FormData();
 
-    // TODO
+    /**
+     * Verifica se a variável uploadedFiles possui não está vázia
+     */
+    if (!uploadedFiles.length) return;
+
+    const file = uploadedFiles[0];
+    /**
+     * Adiciona o arquivo no formulário
+     */
+    data.append('file', file.file, file.name);
 
     try {
-      // await api.post('/transactions/import', data);
+      await api.post('/transactions/import', data);
+
+      history.push('/');
     } catch (err) {
-      // console.log(err.response.error);
+      console.log(err.response.error);
     }
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    const formattedUploadedFiles = files.map(file => ({
+      file,
+      name: file.name,
+      readableSize: filesize(file.size),
+    }));
+
+    setUploadedFiles(formattedUploadedFiles);
   }
 
   return (
